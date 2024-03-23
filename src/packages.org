@@ -1,0 +1,7 @@
+* Packages
+Here I load packages I use.
+#+BEGIN_SRC emacs-lisp
+  (load-theme 'tsdh-light t)
+
+  (provide 'stuff/packages)
+#+END_SRC
