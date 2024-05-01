@@ -3,12 +3,18 @@
              (guix build-system emacs)
              ((guix licenses) #:prefix license:))
 
+(define vcs-file?
+  ;; Return true if the given file is under version control.
+  (or (git-predicate (current-source-directory))
+      (const #t)))
+
 (package
   (name "emacs-stuff")
   (version "funky-version-number")
   (source (local-file "." "emacs-stuff-local-build"
                       #:recursive? #t
-                      #:select? (const #t)))
+                      #:select? vcs-file?))
+
   (build-system emacs-build-system)
   (arguments
    '(#:include '("\\.el$")
