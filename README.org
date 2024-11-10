@@ -11,6 +11,9 @@ Within the source directory, eval this
 After that, add this to your ~/.emacs
 #+begin_src elisp :eval query
   (add-to-list 'load-path "~/path/to/stuff")
-  (require 'stuff)
-  (stuff-init :font-size "20")
+  (use-package stuff
+    :config
+    (stuff-config-set-font 18)
+    (stuff-config-set-variables)
+    (stuff-packages-load-packages))
 #+end_src
