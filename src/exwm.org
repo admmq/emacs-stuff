@@ -1,4 +1,25 @@
 * EXWM
+#+BEGIN_SRC emacs-lisp
+  (defun exwm-change-screen-hook (external-monitor)
+    (let ((xrandr-output-regexp "\n\\([^ ]+\\) connected ")
+          default-output)
+      (with-temp-buffer
+        (call-process "xrandr" nil t nil)
+        (goto-char (point-min))
+        (re-search-forward xrandr-output-regexp nil 'noerror)
+        (setq default-output (match-string 1))
+        (forward-line)
+        (if (not (re-search-forward xrandr-output-regexp nil 'noerror))
+            (call-process "xrandr" nil nil nil "--output" default-output "--auto"
+                          "--output" external-monitor "--off")
+          (call-process
+           "xrandr" nil nil nil
+           "--output" (match-string 1) "--primary" "--auto"
+           "--output" default-output "--off")
+          (setq exwm-randr-workspace-monitor-plist (list 0 (match-string 1)))))))
+#+END_SRC
+
+
 Here I set some variable I want to use with exwm. Like displaying time
 and battery.Also it's recommended to enable icomplete-vertical-mode. Still don't
 know why but I took it from the [[https://github.com/emacs-exwm/exwm/wiki/Configuration-Example][exwm configuration example]]
@@ -105,6 +126,12 @@ All of these also were taken from the [[https://github.com/emacs-exwm/exwm/wiki/
             ([?\C-y] . [?\C-v])
             ;; search
             ([?\C-s] . [?\C-f])))
+
+    (setq exwm-randr-workspace-monitor-plist '(0 "eDP-1"))
+    (add-hook 'exwm-randr-screen-change-hook
+              (lambda ()
+                (exwm-change-screen-hook "HDMI-1")))
+    (exwm-randr-mode 1)
 
     ;; You can hide the minibuffer and echo area when they're not used, by
     ;; uncommenting the following line.
